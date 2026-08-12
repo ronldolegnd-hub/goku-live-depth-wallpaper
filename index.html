@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Goku Live Depth Wallpaper</title>
+<title>Goku Depth Wallpaper</title>
 
 <style>
 * {
@@ -28,146 +29,72 @@ html, body {
   background: #000;
 }
 
-.goku {
+/* BIG CLOCK BEHIND GOKU */
+.clock {
   position: absolute;
-  width: 120%;
-  height: 120%;
-  left: -10%;
-  top: -10%;
-  object-fit: cover;
-  transition: transform 0.12s ease-out;
-  will-change: transform;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,0.15),
-    transparent 45%,
-    rgba(0,0,0,0.25)
-  );
-  pointer-events: none;
-}
-
-.info {
-  position: absolute;
-  top: 7%;
+  top: 5%;
   left: 0;
   width: 100%;
   text-align: center;
-  color: white;
-  text-shadow: 0 3px 12px #000;
-  pointer-events: none;
+  font-size: clamp(95px, 28vw, 210px);
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255,255,255,0.95);
+  letter-spacing: -5px;
+  z-index: 1;
+  white-space: nowrap;
 }
 
-.time {
-  font-size: clamp(42px, 13vw, 90px);
-  font-weight: bold;
-  letter-spacing: 3px;
-}
-
+/* DATE */
 .date {
-  margin-top: 12px;
-  font-size: clamp(16px, 5vw, 28px);
-}
-
-.title {
   position: absolute;
-  bottom: 5%;
+  top: 27%;
   width: 100%;
   text-align: center;
   color: white;
-  font-size: clamp(20px, 6vw, 34px);
+  font-size: clamp(16px, 5vw, 30px);
+  z-index: 3;
+  text-shadow: 0 2px 8px #000;
+}
+
+/* GOKU */
+.goku {
+  position: absolute;
+  width: 125%;
+  height: 125%;
+  left: -12.5%;
+  top: -5%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 2;
+  transition: transform 0.15s ease-out;
+  will-change: transform;
+}
+
+/* BLUE GLOW */
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0,100,255,0.10),
+      transparent 45%,
+      rgba(0,0,0,0.35)
+    );
+}
+
+/* TITLE */
+.title {
+  position: absolute;
+  bottom: 4%;
+  width: 100%;
+  text-align: center;
+  z-index: 5;
+  color: white;
+  font-size: clamp(18px, 6vw, 36px);
   font-weight: bold;
   letter-spacing: 5px;
-  text-shadow: 0 3px 12px #000;
-}
-</style>
-</head>
-
-<body>
-
-<div class="wallpaper">
-
-  <img
-    class="goku"
-    id="goku"
-    src="images (4).jpeg"
-    alt="Goku"
-  >
-
-  <div class="overlay"></div>
-
-  <div class="info">
-    <div class="time" id="time">00:00</div>
-    <div class="date" id="date">Loading...</div>
-  </div>
-
-  <div class="title">
-    GOKU • ULTRA INSTINCT
-  </div>
-
-</div>
-
-<script>
-const goku = document.getElementById("goku");
-const timeText = document.getElementById("time");
-const dateText = document.getElementById("date");
-
-function updateClock() {
-  const now = new Date();
-
-  let hours = now.getHours();
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-
-  hours = String(hours).padStart(2, "0");
-
-  timeText.textContent = hours + ":" + minutes;
-
-  const options = {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  };
-
-  dateText.textContent = now.toLocaleDateString("en-IN", options);
-}
-
-updateClock();
-setInterval(updateClock, 1000);
-
-function moveGoku(x, y) {
-  const moveX = x * 18;
-  const moveY = y * 18;
-
-  goku.style.transform =
-    "translate(" + moveX + "px, " + moveY + "px) scale(1.03)";
-}
-
-window.addEventListener("deviceorientation", function(event) {
-  let x = (event.gamma || 0) / 45;
-  let y = (event.beta || 0) / 45;
-
-  x = Math.max(-1, Math.min(1, x));
-  y = Math.max(-1, Math.min(1, y));
-
-  moveGoku(x, y);
-});
-
-window.addEventListener("touchmove", function(event) {
-  const touch = event.touches[0];
-
-  const x =
-    (touch.clientX / window.innerWidth - 0.5) * 2;
-
-  const y =
-    (touch.clientY / window.innerHeight - 0.5) * 2;
-
-  moveGoku(x, y);
-});
-</script>
-
-</body>
+  text-shadow:
