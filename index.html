@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,72 +28,192 @@ html, body {
   background: #000;
 }
 
-/* BIG CLOCK BEHIND GOKU */
-.clock {
-  position: absolute;
-  top: 5%;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: clamp(95px, 28vw, 210px);
-  font-weight: 900;
-  line-height: 1;
-  color: rgba(255,255,255,0.95);
-  letter-spacing: -5px;
-  z-index: 1;
-  white-space: nowrap;
-}
-
-/* DATE */
-.date {
-  position: absolute;
-  top: 27%;
-  width: 100%;
-  text-align: center;
-  color: white;
-  font-size: clamp(16px, 5vw, 30px);
-  z-index: 3;
-  text-shadow: 0 2px 8px #000;
-}
-
-/* GOKU */
+/* Goku image */
 .goku {
   position: absolute;
   width: 125%;
   height: 125%;
   left: -12.5%;
-  top: -5%;
+  top: -10%;
   object-fit: cover;
-  object-position: center;
-  z-index: 2;
   transition: transform 0.15s ease-out;
   will-change: transform;
 }
 
-/* BLUE GLOW */
-.glow {
+/* Dark fade at the bottom */
+.overlay {
   position: absolute;
   inset: 0;
-  z-index: 4;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.05) 0%,
+    rgba(0,0,0,0.05) 45%,
+    rgba(0,0,0,0.45) 100%
+  );
   pointer-events: none;
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(0,100,255,0.10),
-      transparent 45%,
-      rgba(0,0,0,0.35)
-    );
 }
 
-/* TITLE */
-.title {
+/* Time + date */
+.info {
   position: absolute;
-  bottom: 4%;
+  top: 6%;
+  left: 0;
   width: 100%;
   text-align: center;
-  z-index: 5;
   color: white;
-  font-size: clamp(18px, 6vw, 36px);
-  font-weight: bold;
-  letter-spacing: 5px;
+  text-shadow: 0 3px 12px #000;
+  z-index: 5;
+}
+
+.time {
+  font-size: clamp(55px, 16vw, 105px);
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.date {
+  margin-top: 8px;
+  font-size: clamp(17px, 5vw, 28px);
+  font-weight: 400;
+}
+
+/* Bottom GOKU text */
+.title {
+  position: absolute;
+  bottom: 7%;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-size: clamp(28px, 9vw, 55px);
+  font-weight: 900;
+  letter-spacing: 7px;
   text-shadow:
+    0 3px 10px #000,
+    0 0 20px rgba(0,120,255,0.8);
+  z-index: 5;
+}
+
+/* Small label */
+.subtitle {
+  margin-top: 5px;
+  font-size: clamp(11px, 3vw, 17px);
+  letter-spacing: 4px;
+  font-weight: bold;
+}
+
+/* Make it look good on phones */
+@media (max-width: 500px) {
+  .goku {
+    width: 135%;
+    height: 135%;
+    left: -17.5%;
+    top: -12%;
+  }
+
+  .info {
+    top: 7%;
+  }
+
+  .title {
+    bottom: 5%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wallpaper">
+
+  <img src="goku.jpg" class="goku" id="goku">
+
+  <div class="overlay"></div>
+
+  <div class="info">
+    <div class="time" id="time">00:00</div>
+    <div class="date" id="date">Loading...</div>
+  </div>
+
+  <div class="title">
+    GOKU
+    <div class="subtitle">ULTRA INSTINCT</div>
+  </div>
+
+</div>
+
+<script>
+
+const timeText = document.getElementById("time");
+const dateText = document.getElementById("date");
+const goku = document.getElementById("goku");
+
+/* Live clock */
+function updateClock() {
+
+  const now = new Date();
+
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+
+  timeText.textContent = hours + ":" + minutes;
+
+  const options = {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  };
+
+  dateText.textContent =
+    now.toLocaleDateString("en-IN", options);
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+
+/* Phone movement / depth effect */
+function moveGoku(x, y) {
+
+  const moveX = x * 18;
+  const moveY = y * 18;
+
+  goku.style.transform =
+    "translate(" + moveX + "px, " +
+    moveY + "px) scale(1.03)";
+}
+
+
+/* Gyroscope */
+window.addEventListener("deviceorientation", function(event) {
+
+  let x = (event.gamma || 0) / 45;
+  let y = (event.beta || 0) / 45;
+
+  x = Math.max(-1, Math.min(1, x));
+  y = Math.max(-1, Math.min(1, y));
+
+  moveGoku(x, y);
+
+});
+
+
+/* Touch movement */
+window.addEventListener("touchmove", function(event) {
+
+  const touch = event.touches[0];
+
+  const x =
+    (touch.clientX / window.innerWidth - 0.5) * 2;
+
+  const y =
+    (touch.clientY / window.innerHeight - 0.5) * 2;
+
+  moveGoku(x, y);
+
+});
+
+</script>
+
+</body>
+</html>
