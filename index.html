@@ -35,7 +35,8 @@ html, body {
   left: -10%;
   top: -10%;
   object-fit: cover;
-  transition: transform 0.15s ease-out;
+  transition: transform 0.12s ease-out;
+  will-change: transform;
 }
 
 .overlay {
@@ -43,43 +44,45 @@ html, body {
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0,0,0,0.35),
-    transparent 35%,
-    rgba(0,0,0,0.55)
+    rgba(0,0,0,0.15),
+    transparent 45%,
+    rgba(0,0,0,0.25)
   );
+  pointer-events: none;
 }
 
 .info {
   position: absolute;
-  top: 35px;
+  top: 7%;
   left: 0;
   width: 100%;
   text-align: center;
   color: white;
-  text-shadow: 0 3px 12px black;
+  text-shadow: 0 3px 12px #000;
+  pointer-events: none;
 }
 
 .time {
-  font-size: 58px;
+  font-size: clamp(42px, 13vw, 90px);
   font-weight: bold;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
 }
 
 .date {
-  margin-top: 8px;
-  font-size: 18px;
+  margin-top: 12px;
+  font-size: clamp(16px, 5vw, 28px);
 }
 
 .title {
   position: absolute;
-  bottom: 55px;
+  bottom: 5%;
   width: 100%;
   text-align: center;
   color: white;
-  font-size: 24px;
+  font-size: clamp(20px, 6vw, 34px);
   font-weight: bold;
   letter-spacing: 5px;
-  text-shadow: 0 3px 12px black;
+  text-shadow: 0 3px 12px #000;
 }
 </style>
 </head>
@@ -88,12 +91,17 @@ html, body {
 
 <div class="wallpaper">
 
-  <img class="goku" src="images (4).jpeg" alt="Goku">
+  <img
+    class="goku"
+    id="goku"
+    src="images (4).jpeg"
+    alt="Goku"
+  >
 
   <div class="overlay"></div>
 
   <div class="info">
-    <div class="time" id="time">00:00:00</div>
+    <div class="time" id="time">00:00</div>
     <div class="date" id="date">Loading...</div>
   </div>
 
@@ -104,37 +112,62 @@ html, body {
 </div>
 
 <script>
+const goku = document.getElementById("goku");
+const timeText = document.getElementById("time");
+const dateText = document.getElementById("date");
+
 function updateClock() {
   const now = new Date();
 
-  document.getElementById("time").textContent =
-    now.toLocaleTimeString("en-IN", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false
-    });
+  let hours = now.getHours();
+  const minutes = String(now.getMinutes()).padStart(2, "0");
 
-  document.getElementById("date").textContent =
-    now.toLocaleDateString("en-IN", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-    });
+  hours = String(hours).padStart(2, "0");
+
+  timeText.textContent = hours + ":" + minutes;
+
+  const options = {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  };
+
+  dateText.textContent = now.toLocaleDateString("en-IN", options);
 }
 
 updateClock();
 setInterval(updateClock, 1000);
 
-document.addEventListener("mousemove", function(e) {
-  const x = (e.clientX / window.innerWidth - 0.5) * 12;
-  const y = (e.clientY / window.innerHeight - 0.5) * 12;
+function moveGoku(x, y) {
+  const moveX = x * 18;
+  const moveY = y * 18;
 
-  document.querySelector(".goku").style.transform =
-    `translate(${x}px, ${y}px) scale(1.05)`;
+  goku.style.transform =
+    "translate(" + moveX + "px, " + moveY + "px) scale(1.03)";
+}
+
+window.addEventListener("deviceorientation", function(event) {
+  let x = (event.gamma || 0) / 45;
+  let y = (event.beta || 0) / 45;
+
+  x = Math.max(-1, Math.min(1, x));
+  y = Math.max(-1, Math.min(1, y));
+
+  moveGoku(x, y);
+});
+
+window.addEventListener("touchmove", function(event) {
+  const touch = event.touches[0];
+
+  const x =
+    (touch.clientX / window.innerWidth - 0.5) * 2;
+
+  const y =
+    (touch.clientY / window.innerHeight - 0.5) * 2;
+
+  moveGoku(x, y);
 });
 </script>
 
 </body>
-</html>
